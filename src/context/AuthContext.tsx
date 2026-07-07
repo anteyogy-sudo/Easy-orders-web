@@ -2,7 +2,7 @@ import React, { createContext, useContext, useState} from 'react';
 
 interface AuthContextType {
   token: string | null;
-  user: any | null; // можешь заменить на свой тип пользователя
+  user: any | null; 
   login: (token: string, user: any) => void;
   logout: () => void;
   isAuthenticated: boolean;

@@ -6,7 +6,7 @@ import Cart from './Pages/Cart';
 import Orders from './Pages/Orders';
 import Profile from './Pages/Profile';
 import Auth from './Pages/Auth';
-
+import ProtectedRoute from './Components/ProtectedRoute';
 import './App.css'
 
 function App() {
@@ -19,8 +19,22 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/orders" element={<Orders />} />
-          <Route path="/profile" element={<Profile />} />
+           <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <Orders />
+              </ProtectedRoute>
+            }
+          />
           <Route path="/auth" element={<Auth />} />
         </Routes>
       </main>

@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { useAuth } from "../context/AuthContext";
 
 const Header = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { isAuthenticated, logout } = useAuth();
 
-const [isOpen, setIsOpen] = useState(false);
-
-return (
+  return (
     <header className="bg-red-900 text-white">
       <div className="relative max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <span className="text-xl font-bold">Мой магазин</span>
@@ -34,9 +35,24 @@ return (
           <Link to="/" className="block md:inline py-2 md:py-0 hover:underline" onClick={() => setIsOpen(false)}>Главная</Link>
           <Link to="/catalog" className="block md:inline py-2 md:py-0 hover:underline" onClick={() => setIsOpen(false)}>Каталог</Link>
           <Link to="/cart" className="block md:inline py-2 md:py-0 hover:underline" onClick={() => setIsOpen(false)}>Корзина</Link>
-          <Link to="/orders" className="block md:inline py-2 md:py-0 hover:underline" onClick={() => setIsOpen(false)}>Заказы</Link>
-          <Link to="/profile" className="block md:inline py-2 md:py-0 hover:underline" onClick={() => setIsOpen(false)}>Профиль</Link>
-          <Link to="/auth" className="block md:inline py-2 md:py-0 hover:underline" onClick={() => setIsOpen(false)}>Вход</Link>
+          
+          {isAuthenticated ? (
+            <>
+              <Link to="/orders" className="block md:inline py-2 md:py-0 hover:underline" onClick={() => setIsOpen(false)}>Заказы</Link>
+              <Link to="/profile" className="block md:inline py-2 md:py-0 hover:underline" onClick={() => setIsOpen(false)}>Профиль</Link>
+              <button
+                onClick={() => {
+                  logout();
+                  setIsOpen(false);
+                }}
+                className="block md:inline py-2 md:py-0 hover:underline"
+              >
+                Выйти
+              </button>
+            </>
+          ) : (
+            <Link to="/auth" className="block md:inline py-2 md:py-0 hover:underline" onClick={() => setIsOpen(false)}>Вход</Link>
+          )}
         </nav>
       </div>
     </header>
