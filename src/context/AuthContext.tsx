@@ -2,8 +2,8 @@ import React, { createContext, useContext, useState} from 'react';
 
 interface AuthContextType {
   token: string | null;
-  user: any | null; 
-  login: (token: string, user: any) => void;
+  user: { id: number; username: string; email: string; role: string } | null;
+  login: (token: string, userData: any) => void;
   logout: () => void;
   isAuthenticated: boolean;
 }

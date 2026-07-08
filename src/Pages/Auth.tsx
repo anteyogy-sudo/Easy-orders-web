@@ -11,35 +11,74 @@ const Auth = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
+//   const handleSubmit = async (e: React.FormEvent) => {
+//     e.preventDefault();
+//     setError('');
 
-    const formData = new URLSearchParams();
-    formData.append('username', username);
-    formData.append('password', password);
+//     const formData = new URLSearchParams();
+//     formData.append('username', username);
+//     formData.append('password', password);
 
-    try {
-      const response = await fetch('/api/auth/login', {  
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formData,
-      });
+//     try {
+//       const response = await fetch('/api/auth/login', {  
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/x-www-form-urlencoded',
+//         },
+//         body: formData,
+//       });
 
-      if (!response.ok) {
-        const err = await response.json();
-        throw new Error(err.detail || 'Ошибка входа');
-      }
+//       if (!response.ok) {
+//         const err = await response.json();
+//         throw new Error(err.detail || 'Ошибка входа');
+//       }
 
-      const data = await response.json();
-      login(data.access_token, { username });
-      navigate('/profile');
-    } catch (err: any) {
-      setError(err.message);
+//       const data = await response.json();
+//       login(data.access_token, { username });
+//       navigate('/profile');
+//     } catch (err: any) {
+//       setError(err.message);
+//     }
+//   };
+
+
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError('');
+
+  const formData = new URLSearchParams();
+  formData.append('username', username);
+  formData.append('password', password);
+
+  try {
+    // 1. Логин
+    const loginRes = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: formData,
+    });
+    if (!loginRes.ok) {
+      const err = await loginRes.json();
+      throw new Error(err.detail || 'Ошибка входа');
     }
-  };
+    const loginData = await loginRes.json();
+    const token = loginData.access_token;
+
+    // 2. Запрос профиля (получаем роль)
+    const profileRes = await fetch('/api/auth/me', {
+      headers: { 'Authorization': `Bearer ${token}` },
+    });
+    if (!profileRes.ok) throw new Error('Не удалось получить данные пользователя');
+    const userData = await profileRes.json();
+
+    // 3. Сохраняем токен и данные пользователя в контекст
+    login(token, userData);
+    navigate('/profile');
+  } catch (err: any) {
+    setError(err.message);
+  }
+};
+
 
   return (
     <div className="max-w-md mx-auto mt-10">
